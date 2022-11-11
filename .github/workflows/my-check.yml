@@ -1,3 +1,4 @@
+on: push
 jobs:
   my-check:
     runs-on: ubuntu-latest
