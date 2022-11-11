@@ -22,12 +22,7 @@ const checkPresenceSecondKey = (object, key, firstValue) => {
 };
 
 const makeDiffObject = (file1, file2, tree = {}, isSecondIteration = false) => {
-  let diff = {};
-  if ('children' in tree) {
-    diff = { ...tree };
-  } else {
-    diff.children = [];
-  }
+  const diff = 'children' in tree ? { ...tree } : { children: [] };
 
   const alreadyExist = diff.children.map((item) => item.key);
   const presence = isSecondIteration ? 'onlySecond' : 'onlyFirst';
