@@ -15,44 +15,51 @@ import * as fs from 'fs';
 
 const checkPresenceSecondKey = (object, key, firstValue) => {
   if (key in object) {
-    const secondValue = object[key]
-    return firstValue === secondValue ? 'similar' : 'different'
+    const secondValue = object[key];
+    return firstValue === secondValue ? 'similar' : 'different';
   }
   return 'onlyFirst';
-}
-
+};
 
 const makeDiffObject = (file1, file2, tree = {}, isSecondIteration = false) => {
-  
-  let diff = {}
+  let diff = {};
   if ('children' in tree) {
-    diff = {...tree};
+    diff = { ...tree };
   } else {
-    diff.children = []
+    diff.children = [];
   }
 
-  const alreadyExist = diff.children.map((item) => item.key)
+  const alreadyExist = diff.children.map((item) => item.key);
   const presence = isSecondIteration ? 'onlySecond' : 'onlyFirst';
 
+  /* eslint-disable-next-line */
   for (const [key, firstValue] of Object.entries(file1)) {
-  
     if (alreadyExist.indexOf(key) >= 0) {
+      /* eslint-disable-next-line */
       continue;
     }
 
     const checkSecondKey = checkPresenceSecondKey(file2, key, firstValue);
-    let newDiffItem = {}
+    let newDiffItem = {};
 
     switch (checkSecondKey) {
       case 'onlyFirst':
-        newDiffItem = {key, value: firstValue, presence, children:[]};
+        newDiffItem = {
+          key, value: firstValue, presence, children: [],
+        };
         break;
       case 'different':
-        const secondValue = file2[key]
-        newDiffItem = {key, firstValue, secondValue, presence:'bothDifferent', children:[]}
+        newDiffItem = {
+          key, firstValue, secondValue: file2[key], presence: 'bothDifferent', children: [],
+        };
         break;
       case 'similar':
-        newDiffItem = {key, value: firstValue, presence:'bothSame', children:[]}
+        newDiffItem = {
+          key, value: firstValue, presence: 'bothSame', children: [],
+        };
+        break;
+      default:
+        break;
     }
 
     // let newDiffItem = {}
@@ -69,66 +76,73 @@ const makeDiffObject = (file1, file2, tree = {}, isSecondIteration = false) => {
     //   newDiffItem = {key, value: firstValue, presence, children:[]}
     // }
 
-    diff.children.push(newDiffItem)
+    diff.children.push(newDiffItem);
   }
 
   const result = isSecondIteration ? diff : makeDiffObject(file2, file1, diff, true);
 
-  return result
-}
+  return result;
+};
 
 const takeData = (file) => {
-  const splittedFileName = file.split('.')
-  const extension = splittedFileName[splittedFileName.length - 1]
+  const splittedFileName = file.split('.');
+  const extension = splittedFileName[splittedFileName.length - 1];
 
   let data;
 
   switch (extension) {
     case 'json':
-      data = JSON.parse(fs.readFileSync(file))
-      break
+      data = JSON.parse(fs.readFileSync(file));
+      break;
     default:
-      data = JSON.parse(fs.readFileSync(file))
+      data = JSON.parse(fs.readFileSync(file));
   }
 
-  return data
-}
-
+  return data;
+};
 
 const makeConsoleDiff = (file1, file2) => {
+  const dataFile1 = takeData(file1);
+  const dataFile2 = takeData(file2);
 
-  const dataFile1 = takeData(file1)
-  const dataFile2 = takeData(file2)
-
-  const diffObject = makeDiffObject(dataFile1, dataFile2)
+  const diffObject = makeDiffObject(dataFile1, dataFile2);
 
   const result = diffObject.children
-  .sort((a, b) => {
-    const keyA = a.key.toUpperCase();
-    const keyB = b.key.toUpperCase();
-    if (keyA < keyB) {
-      return -1;
-    }
-    if (keyA > keyB) {
-      return 1;
-    }
-    return 0;
-  })
-  .map((item) => {
-    const {key, presence} = item;
-    switch (presence) {
-      case 'onlyFirst':
-        return `  - ${key}: ${item.value}`;
-      case 'onlySecond':
-        return `  + ${key}: ${item.value}`;
-      case 'bothDifferent':
-        return `  - ${key}: ${item.firstValue}\n  + ${key}: ${item.secondValue}`;
-      case 'bothSame':
-        return `    ${key}: ${item.value}`;
-    }
-  })
-  console.log(`{\n${result.join('\n')}\n}`)
-  return `{\n${result.join('\n')}\n}`
-}
+    .sort((a, b) => {
+      const keyA = a.key.toUpperCase();
+      const keyB = b.key.toUpperCase();
+      if (keyA < keyB) {
+        return -1;
+      }
+      if (keyA > keyB) {
+        return 1;
+      }
+      return 0;
+    })
+    .map((item) => {
+      const { key, presence } = item;
+      let resultRow;
+      switch (presence) {
+        case 'onlyFirst':
+          resultRow = `  - ${key}: ${item.value}`;
+          break;
+        case 'onlySecond':
+          resultRow = `  + ${key}: ${item.value}`;
+          break;
+        case 'bothDifferent':
+          resultRow = `  - ${key}: ${item.firstValue}\n  + ${key}: ${item.secondValue}`;
+          break;
+        case 'bothSame':
+          resultRow = `    ${key}: ${item.value}`;
+          break;
+        default:
+          break;
+      }
+      return resultRow;
+    });
+
+  console.log(`{\n${result.join('\n')}\n}`);
+  return `{\n${result.join('\n')}\n}`;
+};
 
 export default makeConsoleDiff;

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
+import { Command } from 'commander';
 import makeConsoleDiff from '../src/gendiff.js';
-import { Command } from "commander";
 
 const program = new Command();
 
