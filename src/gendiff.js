@@ -34,10 +34,10 @@ const makeDiffObject = (file1, file2, tree = {}, isSecondIteration = false) => {
       continue;
     }
 
-    const checkSecondKey = checkPresenceSecondKey(file2, key, firstValue);
     let newDiffItem = {};
 
-    switch (checkSecondKey) {
+    const checkSecondKey = checkPresenceSecondKey(file2, key, firstValue);
+    switch (checkSecondKey) { // eslint-disable-line
       case 'onlyFirst':
         newDiffItem = {
           key, value: firstValue, presence, children: [],
@@ -52,9 +52,6 @@ const makeDiffObject = (file1, file2, tree = {}, isSecondIteration = false) => {
         newDiffItem = {
           key, value: firstValue, presence: 'bothSame', children: [],
         };
-        break;
-      default:
-        break;
     }
 
     // let newDiffItem = {}
@@ -81,11 +78,10 @@ const makeDiffObject = (file1, file2, tree = {}, isSecondIteration = false) => {
 
 const takeData = (file) => {
   const splittedFileName = file.split('.');
-  const extension = splittedFileName[splittedFileName.length - 1];
+  const fileExtension = splittedFileName[splittedFileName.length - 1];
 
   let data;
-
-  switch (extension) {
+  switch (fileExtension) {
     case 'json':
       data = JSON.parse(fs.readFileSync(file));
       break;
@@ -117,7 +113,7 @@ const makeConsoleDiff = (file1, file2) => {
     .map((item) => {
       const { key, presence } = item;
       let resultRow;
-      switch (presence) {
+      switch (presence) { // eslint-disable-line
         case 'onlyFirst':
           resultRow = `  - ${key}: ${item.value}`;
           break;
@@ -129,9 +125,6 @@ const makeConsoleDiff = (file1, file2) => {
           break;
         case 'bothSame':
           resultRow = `    ${key}: ${item.value}`;
-          break;
-        default:
-          break;
       }
       return resultRow;
     });
