@@ -72,8 +72,6 @@ import _ from 'lodash';
 //   return 'onlyFirst';
 // };
 
-export const isObject = (value) => _.isObject(value) && !_.isArray(value) && value !== null;
-
 // const checkPresenceKeys2 = (key, data1, data2) => {
 //   if (!(key in data2)) {
 //     console.log(key)
@@ -88,6 +86,12 @@ export const isObject = (value) => _.isObject(value) && !_.isArray(value) && val
 
 //   return _.isEqual(firstValue, secondValue) ? 'similar' : 'different';
 // };
+
+export const getValue = (object) => (('secondValue' in object) ? [object.firstValue, object.secondValue] : object.value);
+
+export const isObject = (value) => _.isObject(value) && !_.isArray(value) && value !== null;
+
+export const hasTwoValues = (object) => object.presence === 'differentSingle';
 
 const checkPresenceKey = (key, data1, data2) => {
   if (!(key in data2)) {

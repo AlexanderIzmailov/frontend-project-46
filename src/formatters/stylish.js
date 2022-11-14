@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { isObject } from './parsers.js';
+import { isObject, getValue } from '../parsers.js';
 
 // const file1 = {
 //   "host": "hexlet.io",
@@ -112,8 +112,6 @@ const getPrefix = (object) => {
       return '    ';
   }
 };
-
-const getValue = (object) => ('secondValue' in object) ? [object.firstValue, object.secondValue] : object.value;  // eslint-disable-line
 
 const getStrOfObject = (object, gap, level = 0) => {
   const indent = gap.repeat(level);

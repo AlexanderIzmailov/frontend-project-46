@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import yaml from 'js-yaml';
 import { makeDiffObject } from './parsers.js';
-import getStylishFormat from './stylish.js';
+import getStylishFormat from './formatters/stylish.js';
+import getPlainFormat from './formatters/plain.js';
 
 // const file1 = {
 //   "host": "hexlet.io",
@@ -44,6 +45,9 @@ const makeDiff = (file1, file2, format = 'stylish') => {
   switch (format) {
     case 'stylish':
       result = getStylishFormat(diffObject, '    ');
+      break;
+    case 'plain':
+      result = getPlainFormat(diffObject);
       break;
     default:
       result = getStylishFormat(diffObject, '    ');
