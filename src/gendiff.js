@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import yaml from 'js-yaml';
-import makeDiffObject from './parsers.js';
+import { makeDiffObject } from './parsers.js';
+import getStylishFormat from './stylish.js';
 
 // const file1 = {
 //   "host": "hexlet.io",
@@ -34,45 +35,21 @@ const readData = (file) => {
   return data;
 };
 
-const makeConsoleDiff = (file1, file2) => {
+const makeDiff = (file1, file2, format = 'stylish') => {
   const dataFile1 = readData(file1);
   const dataFile2 = readData(file2);
 
   const diffObject = makeDiffObject(dataFile1, dataFile2);
-
-  const result = diffObject.children
-    .sort((a, b) => {
-      const keyA = a.key.toUpperCase();
-      const keyB = b.key.toUpperCase();
-      if (keyA < keyB) {
-        return -1;
-      }
-      if (keyA > keyB) {
-        return 1;
-      }
-      return 0;
-    })
-    .map((item) => {
-      const { key, presence } = item;
-      let resultRow;
-      switch (presence) { // eslint-disable-line
-        case 'onlyFirst':
-          resultRow = `  - ${key}: ${item.value}`;
-          break;
-        case 'onlySecond':
-          resultRow = `  + ${key}: ${item.value}`;
-          break;
-        case 'bothDifferent':
-          resultRow = `  - ${key}: ${item.firstValue}\n  + ${key}: ${item.secondValue}`;
-          break;
-        case 'bothSame':
-          resultRow = `    ${key}: ${item.value}`;
-      }
-      return resultRow;
-    });
-
-  console.log(`{\n${result.join('\n')}\n}`);
-  return `{\n${result.join('\n')}\n}`;
+  let result;
+  switch (format) {
+    case 'stylish':
+      result = getStylishFormat(diffObject, '    ');
+      break;
+    default:
+      result = getStylishFormat(diffObject, '    ');
+  }
+  console.log(result);
+  return result;
 };
 
-export default makeConsoleDiff;
+export default makeDiff;
