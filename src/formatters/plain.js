@@ -6,10 +6,20 @@ const checkValue = (value) => {
     return '[complex value]';
   }
 
-  switch (value) {
-    case (null):
-    case (true):
-    case (false):
+  // switch (value) {
+  //   case (null):
+  //   case (true):
+  //   case (false):
+  //     return value;
+  //   default:
+  //     return typeof(value) === 'number' ? value : `'${value}'`;
+  // }
+
+  switch (true) {
+    case (value === null):
+    case (value === true):
+    case (value === false):
+    case (typeof (value) === 'number'):
       return value;
     default:
       return `'${value}'`;
