@@ -48,11 +48,12 @@ const getPlainFormat = (object, path = '') => {
         break;
       case 'differentObjects':
         newRow = getPlainFormat(currentObject.value, getPath(path, key));
+        break;
+      default:
+        return;
     }
 
-    if (newRow !== undefined) {
-      result.push(newRow);
-    }
+    result.push(newRow);
   });
   return result.join('\n');
 };

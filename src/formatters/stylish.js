@@ -113,7 +113,7 @@ const getPrefix = (object) => {
   }
 };
 
-const getStrOfObject = (object, gap, level = 0) => {
+const getStylishFormat = (object, gap, level = 0) => {
   const indent = gap.repeat(level);
 
   const sortedKeysOfDiff = _.sortBy(Object.keys(object));
@@ -138,7 +138,7 @@ const getStrOfObject = (object, gap, level = 0) => {
         break;
       case 'differentObjects':
       case 'similarObjects':
-        resultRow = `${indent}${prefix}${key}: ${getStrOfObject(value, gap, level + 1)}`;
+        resultRow = `${indent}${prefix}${key}: ${getStylishFormat(value, gap, level + 1)}`;
     }
 
     result.push(resultRow);
@@ -147,4 +147,4 @@ const getStrOfObject = (object, gap, level = 0) => {
   return `{\n${result.join('\n')}\n${indent}}`;
 };
 
-export default getStrOfObject;
+export default getStylishFormat;

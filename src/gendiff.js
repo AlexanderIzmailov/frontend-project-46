@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import yaml from 'js-yaml';
 import { makeDiffObject } from './parsers.js';
-import getStylishFormat from './formatters/stylish.js';
-import getPlainFormat from './formatters/plain.js';
+import getFormattedDiff from './formatters/index.js';
 
 // const file1 = {
 //   "host": "hexlet.io",
@@ -41,18 +40,7 @@ const makeDiff = (file1, file2, format = 'stylish') => {
   const dataFile2 = readData(file2);
 
   const diffObject = makeDiffObject(dataFile1, dataFile2);
-  let result;
-  switch (format) {
-    case 'stylish':
-      result = getStylishFormat(diffObject, '    ');
-      break;
-    case 'plain':
-      result = getPlainFormat(diffObject);
-      break;
-    default:
-      result = getStylishFormat(diffObject, '    ');
-  }
-  console.log(result);
+  const result = getFormattedDiff(diffObject, format);
   return result;
 };
 
