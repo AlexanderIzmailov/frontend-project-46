@@ -1,6 +1,6 @@
-import getPlainFormat from "./plain.js";
-import getStylishFormat from "./stylish.js";
-import getJSONFormat from "./json.js";
+import getPlainFormat from './plain.js';
+import getStylishFormat from './stylish.js';
+import getJSONFormat from './json.js';
 
 const getFormattedDiff = (diffObject, format) => {
   let result;
@@ -19,6 +19,6 @@ const getFormattedDiff = (diffObject, format) => {
   }
   console.log(result);
   return result;
-}
+};
 
 export default getFormattedDiff;
