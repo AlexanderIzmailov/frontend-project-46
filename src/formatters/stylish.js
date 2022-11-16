@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { isObject, getValue } from '../parsers.js';
+import { isObject, getDiffValue } from '../parsers.js';
 
 // const file1 = {
 //   "host": "hexlet.io",
@@ -118,30 +118,25 @@ const getStylishFormat = (object, gap, level = 0) => {
 
   const sortedKeysOfDiff = _.sortBy(Object.keys(object));
 
-  const result = [];
-
-  sortedKeysOfDiff.forEach((key) => {
+  const result = sortedKeysOfDiff.map((key) => {
     const currentObject = object[key];
     const { presence } = currentObject;
     const prefix = getPrefix(currentObject);
-    const value = getValue(currentObject);
+    const value = getDiffValue(currentObject);
 
-    let resultRow;
-    switch (presence) { // eslint-disable-line
+    switch (presence) {
       case 'onlyFirst':
       case 'onlySecond':
       case 'similarSingle':
-        resultRow = `${indent}${prefix}${key}: ${getStrOfValue(value, level)}`;
-        break;
+        return `${indent}${prefix}${key}: ${getStrOfValue(value, level)}`;
       case 'differentSingle':
-        resultRow = `${indent}${prefix[0]}${key}: ${getStrOfValue(value[0], level)}\n${indent}${prefix[1]}${key}: ${getStrOfValue(value[1], level)}`;
-        break;
+        return `${indent}${prefix[0]}${key}: ${getStrOfValue(value[0], level)}\n${indent}${prefix[1]}${key}: ${getStrOfValue(value[1], level)}`;
       case 'differentObjects':
       case 'similarObjects':
-        resultRow = `${indent}${prefix}${key}: ${getStylishFormat(value, gap, level + 1)}`;
+        return `${indent}${prefix}${key}: ${getStylishFormat(value, gap, level + 1)}`;
+      default:
+        return null;
     }
-
-    result.push(resultRow);
   });
 
   return `{\n${result.join('\n')}\n${indent}}`;

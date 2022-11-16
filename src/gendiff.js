@@ -19,20 +19,15 @@ import getFormattedDiff from './formatters/index.js';
 const readData = (file) => {
   const fileExtension = file.split('.').pop();
 
-  let data;
   switch (fileExtension) {
     case 'json':
-      data = JSON.parse(fs.readFileSync(file));
-      break;
+      return JSON.parse(fs.readFileSync(file));
     case 'yaml':
     case 'yml':
-      data = yaml.load(fs.readFileSync(file));
-      break;
+      return yaml.load(fs.readFileSync(file));
     default:
-      data = JSON.parse(fs.readFileSync(file));
+      return JSON.parse(fs.readFileSync(file));
   }
-
-  return data;
 };
 
 const makeDiff = (file1, file2, format = 'stylish') => {

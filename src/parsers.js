@@ -87,11 +87,13 @@ import _ from 'lodash';
 //   return _.isEqual(firstValue, secondValue) ? 'similar' : 'different';
 // };
 
-export const getValue = (object) => (('secondValue' in object) ? [object.firstValue, object.secondValue] : object.value);
+export const getDiffValue = (object) => (('secondValue' in object) ? [object.firstValue, object.secondValue] : object.value);
 
 export const isObject = (value) => _.isObject(value) && !_.isArray(value) && value !== null;
 
 export const hasTwoValues = (object) => object.presence === 'differentSingle';
+
+const getObjectValue = (key, object) => (key in object ? object[key] : undefined);
 
 const checkPresenceKey = (key, data1, data2) => {
   if (!(key in data2)) {
@@ -111,36 +113,70 @@ const checkPresenceKey = (key, data1, data2) => {
   return _.isEqual(firstValue, secondValue) ? similarResult : differentResult;
 };
 
+// export const makeDiffObject = (data1, data2, tree = {}, isSecondIteration = false) => {
+//   const diff = { ...tree };
+
+//   /* eslint-disable-next-line */
+//   for (const [key, value] of Object.entries(data1)) {
+//     /* eslint-disable-next-line */
+//     if (isSecondIteration && key in diff) continue;
+
+//     const secondValue = key in data2 ? data2[key] : undefined;
+
+//     let newDiffItem;
+//     const presence = checkPresenceKey(key, data1, data2);
+//     switch (presence) { // eslint-disable-line
+//       case 'onlySecond':
+//       case 'onlyFirst':
+//         newDiffItem = { key, value, presence: isSecondIteration ? 'onlySecond' : 'onlyFirst' };
+//         break;
+//       case 'similarObjects':
+//       case 'similarSingle':
+//         newDiffItem = { key, value, presence };
+//         break;
+//       case 'differentSingle':
+//         newDiffItem = { key, firstValue: value, secondValue, presence };  // eslint-disable-line
+//         break;
+//       case 'differentObjects':
+//         newDiffItem = { key, value: makeDiffObject(value, secondValue), presence };
+//     }
+
+//     diff[key] = newDiffItem;
+//   }
+
+//   const result = isSecondIteration ? diff : makeDiffObject(data2, data1, diff, true);
+//   return result;
+// };
+
+const getNestedValue = (key, data1, data2, isSecondIteration) => {
+  const firstValue = getObjectValue(key, data1);
+  const secondValue = getObjectValue(key, data2);
+
+  const presence = checkPresenceKey(key, data1, data2);
+  switch (presence) {
+    case 'onlySecond':
+    case 'onlyFirst':
+      return { key, value: firstValue, presence: isSecondIteration ? 'onlySecond' : 'onlyFirst' };
+    case 'similarObjects':
+    case 'similarSingle':
+      return { key, value: firstValue, presence };
+    case 'differentSingle':
+      return { key, firstValue, secondValue, presence };  // eslint-disable-line
+    case 'differentObjects':
+      return { key, value: makeDiffObject(firstValue, secondValue), presence }; // eslint-disable-line
+    default:
+      return null;
+  }
+};
+
 export const makeDiffObject = (data1, data2, tree = {}, isSecondIteration = false) => {
   const diff = { ...tree };
 
-  /* eslint-disable-next-line */
-  for (const [key, value] of Object.entries(data1)) {
-    /* eslint-disable-next-line */
-    if (isSecondIteration && key in diff) continue;
-
-    const secondValue = key in data2 ? data2[key] : undefined;
-
-    let newDiffItem;
-    const presence = checkPresenceKey(key, data1, data2);
-    switch (presence) { // eslint-disable-line
-      case 'onlySecond':
-      case 'onlyFirst':
-        newDiffItem = { key, value, presence: isSecondIteration ? 'onlySecond' : 'onlyFirst' };
-        break;
-      case 'similarObjects':
-      case 'similarSingle':
-        newDiffItem = { key, value, presence };
-        break;
-      case 'differentSingle':
-        newDiffItem = { key, firstValue: value, secondValue, presence };  // eslint-disable-line
-        break;
-      case 'differentObjects':
-        newDiffItem = { key, value: makeDiffObject(value, secondValue), presence };
+  Object.keys(data1).forEach((key) => {
+    if (!(key in diff)) {
+      diff[key] = getNestedValue(key, data1, data2, isSecondIteration);
     }
-
-    diff[key] = newDiffItem;
-  }
+  });
 
   const result = isSecondIteration ? diff : makeDiffObject(data2, data1, diff, true);
   return result;

@@ -37,34 +37,26 @@ const getPath = (path, key) => (path === '' ? `${key}` : `${path}.${key}`);
 
 const getPlainFormat = (object, path = '') => {
   const sortedKeysOfDiff = _.sortBy(Object.keys(object));
-  const result = [];
 
-  sortedKeysOfDiff.forEach((key) => {
+  const result = sortedKeysOfDiff.map((key) => {
     const currentObject = object[key];
     const { presence } = currentObject;
     const formattedValue = getValue(currentObject);
     const property = getPath(path, key);
 
-    let newRow;
     switch (presence) { // eslint-disable-line
       case 'onlySecond':
-        newRow = `Property '${property}' was added with value: ${formattedValue}`;
-        break;
+        return `Property '${property}' was added with value: ${formattedValue}`;
       case 'onlyFirst':
-        newRow = `Property '${property}' was removed`;
-        break;
+        return `Property '${property}' was removed`;
       case 'differentSingle':
-        newRow = `Property '${property}' was updated. From ${formattedValue[0]} to ${formattedValue[1]}`;
-        break;
+        return `Property '${property}' was updated. From ${formattedValue[0]} to ${formattedValue[1]}`;
       case 'differentObjects':
-        newRow = getPlainFormat(currentObject.value, getPath(path, key));
-        break;
+        return getPlainFormat(currentObject.value, getPath(path, key));
       default:
-        return;
+        return null;
     }
-
-    result.push(newRow);
-  });
+  }).filter((a) => a); // filter for empty values
   return result.join('\n');
 };
 
