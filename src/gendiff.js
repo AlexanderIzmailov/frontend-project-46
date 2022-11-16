@@ -17,7 +17,7 @@ import getFormattedDiff from './formatters/index.js';
 // };
 
 const readData = (file) => {
-  const fileExtension = file.split('.').pop();
+  const fileExtension = file.split('.').pop();  // eslint-disable-line
 
   switch (fileExtension) {
     case 'json':

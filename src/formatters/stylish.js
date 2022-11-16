@@ -90,12 +90,8 @@ const getStrOfValue = (value, level = 0) => {
 
   const indent = '    '.repeat(level + 1);
   const sortedKeysOfDiff = _.sortBy(Object.keys(value));
-  const result = [];
 
-  sortedKeysOfDiff.forEach((key) => {
-    const resultRow = `${indent}    ${key}: ${getStrOfValue(value[key], level + 1)}`;
-    result.push(resultRow);
-  });
+  const result = sortedKeysOfDiff.map((key) => `${indent}    ${key}: ${getStrOfValue(value[key], level + 1)}`);
 
   return `{\n${result.join('\n')}\n${indent}}`;
 };

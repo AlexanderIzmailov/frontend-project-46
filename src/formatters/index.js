@@ -2,22 +2,23 @@ import getPlainFormat from './plain.js';
 import getStylishFormat from './stylish.js';
 import getJSONFormat from './json.js';
 
-const getFormattedDiff = (diffObject, format) => {
-  let result;
+const getDiff = (diffObject, format) => {
   switch (format) {
     case 'stylish':
-      result = getStylishFormat(diffObject, '    ');
-      break;
+      return getStylishFormat(diffObject, '    ');
     case 'plain':
-      result = getPlainFormat(diffObject);
-      break;
+      return getPlainFormat(diffObject);
     case 'json':
-      result = getJSONFormat(diffObject);
-      break;
+      return getJSONFormat(diffObject);
     default:
-      result = getStylishFormat(diffObject, '    ');
+      return getStylishFormat(diffObject, '    ');
   }
+};
+
+const getFormattedDiff = (diffObject, format) => {
+  const result = getDiff(diffObject, format);
   console.log(result);
+
   return result;
 };
 

@@ -95,6 +95,7 @@ export const hasTwoValues = (object) => object.presence === 'differentSingle';
 
 const getObjectValue = (key, object) => (key in object ? object[key] : undefined);
 
+/* eslint-disable */
 const checkPresenceKey = (key, data1, data2) => {
   if (!(key in data2)) {
     return 'onlyFirst';
@@ -112,6 +113,7 @@ const checkPresenceKey = (key, data1, data2) => {
 
   return _.isEqual(firstValue, secondValue) ? similarResult : differentResult;
 };
+/* eslint-enable */
 
 // export const makeDiffObject = (data1, data2, tree = {}, isSecondIteration = false) => {
 //   const diff = { ...tree };
@@ -174,7 +176,7 @@ export const makeDiffObject = (data1, data2, tree = {}, isSecondIteration = fals
 
   Object.keys(data1).forEach((key) => {
     if (!(key in diff)) {
-      diff[key] = getNestedValue(key, data1, data2, isSecondIteration);
+      diff[key] = getNestedValue(key, data1, data2, isSecondIteration); // eslint-disable-line
     }
   });
 
