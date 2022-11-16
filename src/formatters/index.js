@@ -4,14 +4,13 @@ import getJSONFormat from './json.js';
 
 const getDiff = (diffObject, format) => {
   switch (format) {
+    default:
     case 'stylish':
       return getStylishFormat(diffObject, '    ');
     case 'plain':
       return getPlainFormat(diffObject);
     case 'json':
       return getJSONFormat(diffObject);
-    default:
-      return getStylishFormat(diffObject, '    ');
   }
 };
 
