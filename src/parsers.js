@@ -172,13 +172,18 @@ const getNestedValue = (key, data1, data2, isSecondIteration) => {
 };
 
 export const makeDiffObject = (data1, data2, tree = {}, isSecondIteration = false) => {
-  const diff = { ...tree };
+  // const diff = { ...tree };
 
-  Object.keys(data1).forEach((key) => {
-    if (!(key in diff)) {
-      diff[key] = getNestedValue(key, data1, data2, isSecondIteration); // eslint-disable-line
-    }
-  });
+  // Object.keys(data1).forEach((key) => {
+  //   if (!(key in diff)) {
+  //     diff[key] = getNestedValue(key, data1, data2, isSecondIteration); // eslint-disable-line
+  //   }
+  // });
+
+  const diff = Object.keys(data1).reduce((acc, key) => {
+    const currentValue = getNestedValue(key, data1, data2, isSecondIteration);
+    return { [key]: currentValue, ...acc };
+  }, { ...tree });
 
   const result = isSecondIteration ? diff : makeDiffObject(data2, data1, diff, true);
   return result;
